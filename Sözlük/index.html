@@ -4,30 +4,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PFAL Sözlük</title>
+    <title>PFAL Çevrim İçi Sözlük</title>
     <style>
         :root {
             --row-count: 136;
         }
+
         body,
         html {
             width: 100vw;
             height: 100vh;
-            background-color: rgb(51, 49, 40);
-            color: azure !important;
+            background-color: #242424;
+            color: #f0d332 !important;
             overflow-x: hidden;
             margin: 0;
             padding: 0;
             overflow: hidden;
         }
 
-        body{
+        body {
             position: absolute;
             top: 1vh;
         }
 
         .word-container {
-            background-color: rgb(201, 142, 14);
+            background-color: #5c1414;
             display: flex;
             flex-direction: column;
             gap: 2%;
@@ -41,21 +42,27 @@
         .word-list {
             position: relative;
             width: 98%;
-            height: calc(50px * 136 / 2);
-            display: grid;
+            padding-bottom: 30%;
+            display: flex;
             left: 50%;
             transform: translateX(-50%);
             justify-content: center;
-            grid-template-columns: repeat(2, 48%);
-            grid-template-rows: repeat(var(--row-count), 50px);
-            gap: 1%;
-            grid-auto-flow: column;
+            gap: 2%;
+        }
+        
+        .collumn{
+          display: grid;
+          grid-template-columns: 1fr;
+          grid-auto-flow: dense;
+          grid-auto-rows: 50px;
+          gap: 3vh;
+          flex: 1;
         }
 
         .container {
-          width: 100%;
-          height: 100vh;
-          overflow-y: scroll;
+            width: 100%;
+            height: 100vh;
+            overflow-y: scroll;
         }
 
         .activated {
@@ -68,7 +75,7 @@
 
         .word-reveal-button {
             position: relative;
-            background-color: rgb(182, 20, 41);
+            background-color: #4f4f4d;
             width: 100%;
             height: 100%;
             display: flex;
@@ -98,7 +105,7 @@
 
             border: 2px solid rgb(224, 153, 0);
             outline: none;
-            background-color: rgb(182, 20, 41);
+            background-color: #4f4f4d;
             color: inherit;
             left: 50%;
             transform: translateX(-50%);
@@ -116,12 +123,16 @@
             .word-list {
                 grid-template-columns: repeat(1, 98%);
             }
-        }        
-        
+        }
+
         @media only screen and (min-width: 1800px) {
             .word-list {
                 grid-template-columns: repeat(3, 32%);
             }
+        }
+
+        .footer {
+            padding: 1%
         }
     </style>
 
@@ -129,1096 +140,1111 @@
 
 
 <body>
+    <div class="footer">
+        "Dilimizin Zenginlikleri Projesi" kapsamında hazırlanan bu sözlük, okulumuz Türk Dili ve Edebiyatı Öğretmeni
+        Funda ÖZARİ gözetiminde öğrencilerimiz Meyra ÖZDEMİR, Arda DİLMAÇ, Ecrin KOŞAR, Defne Berra ÇELİK, Enes SİNÇ,
+        Zeynep Beyza BULUT, Ozan YAĞMUR ve Ege AÇIKGÖZ tarafından hazırlanmıştır.
+    </div>
+
     <input type="text" id="search-bar" onkeyup="search(event)">
     <div class="container">
-      <div class="word-list" id="word-list">
+        <div class="word-list" id="word-list">
 
-      </div>
+        </div>
     </div>
 
     <script defer>
-        const words = [
-  {
-    "Harf": "A",
-    "Kelime": "Ahenk",
-    "Anlamı": "Uyum,düzen.",
-    "Türkçe": "Uyum",
-    "Cümle": "Bu dizelerin ahenk içinde olduğu görülür."
-  },
-  {
-    "Harf": "A",
-    "Kelime": "Aktüel",
-    "Anlamı": "Güncel,yakın zamanda gerçekleşmiş olan.",
-    "Türkçe": "Güncel",
-    "Cümle": "Market zincirleri her hafta aktüel ürünler kataloğu yayınlar."
-  },
-  {
-    "Harf": "A",
-    "Kelime": "Alafranga",
-    "Anlamı": "Batı tarzında,Türk geleneklerine uygun olmayan.",
-    "Türkçe": "Batı'yı benimseyen kimse",
-    "Cümle": "Günümüzdeki alafranga gençlerin sayısı gittikçe artıyor."
-  },
-  {
-    "Harf": "A",
-    "Kelime": "Alaturka",
-    "Anlamı": "Türk geleneklerine uygun olan.",
-    "Türkçe": "Türklere özgü olan",
-    "Cümle": "Alaturka misafirperverliğiyle bizi kapıda karşıladılar."
-  },
-  {
-    "Harf": "A",
-    "Kelime": "Alegorik",
-    "Anlamı": "Temsili",
-    "Türkçe": "",
-    "Cümle": "Türk edebiyatında alegorik anlatıma sahip birçok eser var."
-  },
-  {
-    "Harf": "A",
-    "Kelime": "Anımsamak",
-    "Anlamı": "Hatırlamak.",
-    "Türkçe": "Hatırlamak",
-    "Cümle": "O çocuğu görünce bir anlık kuzenimi anımsadım."
-  },
-  {
-    "Harf": "A",
-    "Kelime": "Arı dil",
-    "Anlamı": "Öz Türkçe.",
-    "Türkçe": "Sade",
-    "Cümle": "Bu yazarın hikayeleri arı dile uygundur."
-  },
-  {
-    "Harf": "B",
-    "Kelime": "Bağdaşmak",
-    "Anlamı": "Her yönden birbiriyle uyuşmak, kaynaşmak, iyi anlaşmak, uzlaşmak, uymak.",
-    "Türkçe": "Uymak, birbirine uygun olmak",
-    "Cümle": "Onun düşünceleri benimkilerle pek bağdaşmıyor."
-  },
-  {
-    "Harf": "B",
-    "Kelime": "Banal",
-    "Anlamı": "Herkesçe bilinen, anlaşılan, herkesçe kullanılan sözcük, söz.",
-    "Türkçe": "Sıradan, basit, herkesin söylediği türden",
-    "Cümle": "Bu konu artık çok banal, herkes aynı şeyleri söylüyor."
-  },
-  {
-    "Harf": "B",
-    "Kelime": "Basmakalıp",
-    "Anlamı": "Hiçbir özgün yönü bulunmayan, bilinenden değişik olmayan, her zamankini, var olanı yineleyen.",
-    "Türkçe": "Kalıplaşmış, özgün olmayan",
-    "Cümle": "Filmin sonu tamamen basmakalıptı, hiçbir sürpriz yoktu."
-  },
-  {
-    "Harf": "B",
-    "Kelime": "Betik",
-    "Anlamı": "Her türlü yazılı şey.",
-    "Türkçe": "Yazı, senaryo, kısa metin",
-    "Cümle": "Öğretmen bizden kısa bir betik yazmamızı istedi."
-  },
-  {
-    "Harf": "B",
-    "Kelime": "Biçem",
-    "Anlamı": "Anlatma biçimi, deyiş ya da yapış biçimi.",
-    "Türkçe": "Üslup, tarz, anlatım biçimi",
-    "Cümle": "Yazarın biçemi sade ama etkileyici."
-  },
-  {
-    "Harf": "B",
-    "Kelime": "Bulgu",
-    "Anlamı": "Var olduğu halde o zamana değin varlığı bilinmeyen bir şeyi bulup ortaya çıkarma işi.",
-    "Türkçe": "Elde edilen bilgi, kanıt, sonuç",
-    "Cümle": "Deneyden ilginç bir bulgu elde ettik."
-  },
-  {
-    "Harf": "C",
-    "Kelime": "Cazibe",
-    "Anlamı": "Etkileme, çekim gücü.",
-    "Türkçe": "Çekicilik, albeni",
-    "Cümle": "Onun doğal cazibesi, kalabalıklar arasında bile dikkat çekiyordu."
-  },
-  {
-    "Harf": "C",
-    "Kelime": "Cevap",
-    "Anlamı": "Bir soruya, duruma ya da çağrıya verilen karşılık.",
-    "Türkçe": "Karşılık, yanıt",
-    "Cümle": "Soruma hemen cevap verdiğin için teşekkür ederim."
-  },
-  {
-    "Harf": "C",
-    "Kelime": "Ciddiyet",
-    "Anlamı": "Davranış veya durumun ağırbaşlılık ve önem taşıması.",
-    "Türkçe": "Önem, resmiyet, disiplin",
-    "Cümle": "İş görüşmelerinde ciddiyetini koruması takdir topladı."
-  },
-  {
-    "Harf": "C",
-    "Kelime": "Cümle",
-    "Anlamı": "Bir düşünceyi anlatan, anlamlı kelime dizisi.",
-    "Türkçe": "Düşünce ya da duyguyu anlatan söz dizimi",
-    "Cümle": "Bugün çok güzel bir cümle kurdun, anlamı çok derindi."
-  },
-  {
-    "Harf": "C",
-    "Kelime": "Cürret",
-    "Anlamı": "Cesaretin sınırlarını zorlayan, çoğu zaman haddini aşan davranış.",
-    "Türkçe": "Gözü peklik, küstahlık",
-    "Cümle": "Bu kadar açıkça karşı çıkmaya nasıl cürret etti, anlamıyorum."
-  },
-  {
-    "Harf": "Ç",
-    "Kelime": "Çağdaş",
-    "Anlamı": "Aynı anda yaşayan,çağın şartlarına uygun yaşayan.",
-    "Türkçe": "Aynı çağda yaşayan",
-    "Cümle": "Bizim bu yolda çağdaş zihinlere ihtiyacımız var."
-  },
-  {
-    "Harf": "Ç",
-    "Kelime": "Çağrışım",
-    "Anlamı": "Hatırlatma.",
-    "Türkçe": "Bazı şeylerin anımsanması",
-    "Cümle": "Bu eserler rönesansı çağrıştırıyor."
-  },
-  {
-    "Harf": "Ç",
-    "Kelime": "Çeşni",
-    "Anlamı": "Hoşa giden özellikler.",
-    "Türkçe": "Çeşit",
-    "Cümle": "Bu yemek çeşnili."
-  },
-  {
-    "Harf": "Ç",
-    "Kelime": "Çevirmen",
-    "Anlamı": "Bir yazıyı bir dilden başka dile çevirendir.",
-    "Türkçe": "Dilmaç",
-    "Cümle": "Bu konuşmaları anlayabilmek için çevirmen lazım."
-  },
-  {
-    "Harf": "Ç",
-    "Kelime": "Çıkarım",
-    "Anlamı": "Sonuç çıkarma işi.",
-    "Türkçe": "Önermeleri karşılaştırarak varılan sonuç",
-    "Cümle": "Yaşanan olaylar hakkında çıkarım yapılmazsa durum vahim olacak."
-  },
-  {
-    "Harf": "D",
-    "Kelime": "Dağarcık",
-    "Anlamı": "Küçük torba, kese, bilgi kelime deneyim hazinesi, öğrenebilme yetisi.",
-    "Türkçe": "Kese",
-    "Cümle": "Bu yemek çeşnili güzel olmuş."
-  },
-  {
-    "Harf": "D",
-    "Kelime": "Dejenere",
-    "Anlamı": "Aslını yitirmiş, niteliğini kaybetmiş, bozulmuş (biyolojik anlamı) kalıtsallığını yitirmiş hücre.",
-    "Türkçe": "Yozlaşmış, bozulmuş",
-    "Cümle": "Bazı sanat kültürleri tamamen dejenere hale geldi."
-  },
-  {
-    "Harf": "D",
-    "Kelime": "Devinim",
-    "Anlamı": "Hareket, kımıldama, yer değiştirme, ilerleme, gelişim, süreci.",
-    "Türkçe": "Değişim",
-    "Cümle": "Doğadaki devinim hiç durmadan devam eder ."
-  },
-  {
-    "Harf": "D",
-    "Kelime": "Dehr",
-    "Anlamı": "Zaman, çağ, dönem, insan yaşamının uzun süren süreci.",
-    "Türkçe": "Zaman, çağ, dönem",
-    "Cümle": "Dehrin yükü ağır gelir bazı insanlara."
-  },
-  {
-    "Harf": "D",
-    "Kelime": "Dingin",
-    "Anlamı": "Sessiz, sakin, huzurlu, durgun, duygusal olarak dengede olan.",
-    "Türkçe": "Dinmiş",
-    "Cümle": "Sabahın sessiz dinginliği içimi rahatlattı."
-  },
-  {
-    "Harf": "E",
-    "Kelime": "Edimsel",
-    "Anlamı": "Bir şeyin eyleme, davranışa veya uygulamaya dayanmasını anlatan kelimedir.",
-    "Türkçe": "Eylemli, uygulamalı",
-    "Cümle": "Ögretmen, öğrencilerin edimsel becerilerini geliştirmek için uygulamalar yaptı."
-  },
-  {
-    "Harf": "E",
-    "Kelime": "Egzotik",
-    "Anlamı": "Yabancı ülkelerden gelen farklı, alışılmadık, ilginç ve çekici olan şeylere denir.",
-    "Türkçe": "Alışılmışın dışı, değişik",
-    "Cümle": "Gittiğimiz resttorantta egzotik meyve ve baharatlar kullanılıyordu."
-  },
-  {
-    "Harf": "E",
-    "Kelime": "Eğreti",
-    "Anlamı": "Bir şeyin geçici, tam yerleşmemiş, kalıcı olmayan ya da doğallıktan uzak olmasıdır.",
-    "Türkçe": "Geçici, yapay",
-    "Cümle": "Bu mutluluk bana eğreti geliyor, sanki her an bitecekmiş gibi."
-  },
-  {
-    "Harf": "E",
-    "Kelime": "Empoze",
-    "Anlamı": "Bir kuralı, davranışı veya düşünceyi başkasına zorla kabul ettirmek demektir.",
-    "Türkçe": "Dayatmak, baskı yapmak",
-    "Cümle": "Kimseye kendi fikirlerini empoze etmeye hakkın yok."
-  },
-  {
-    "Harf": "E",
-    "Kelime": "Erek",
-    "Anlamı": "Bir işin yapılmak istendiği amaç ve  ulaşılmak istenen hedef demektir.",
-    "Türkçe": "Amaç, gaye",
-    "Cümle": "Bu projenin temel ereği çevre bilincini arttırmaktır."
-  },
-  {
-    "Harf": "F",
-    "Kelime": "Farkındalık",
-    "Anlamı": "Kişinin kendi düşünce, duygu ve davranışlarının bilincinde olması.",
-    "Türkçe": "Umursamaz, kaygısız",
-    "Cümle": "Duygusal farkındalık, kişisel gelişimin temel taşlarından biridir."
-  },
-  {
-    "Harf": "F",
-    "Kelime": "Felsefe",
-    "Anlamı": "Varlığı, bilgiyi, yaşamı sorgulayan düşünce disiplini.",
-    "Türkçe": "Düşünce sistemi",
-    "Cümle": "Hayata dair geliştirdiği felsefe, onu diğerlerinden ayırıyordu."
-  },
-  {
-    "Harf": "F",
-    "Kelime": "Fonetik",
-    "Anlamı": "Ses bilimi; konuşma seslerini inceleyen dil bilimi dalı.",
-    "Türkçe": "Ses yapısı bilgisi",
-    "Cümle": "Dil öğreniminde fonetik çalışmaları büyük önem taşır."
-  },
-  {
-    "Harf": "F",
-    "Kelime": "Formalite",
-    "Anlamı": "Zorunlu ama çoğu zaman içeriği olmayan işlem veya davranış.",
-    "Türkçe": "Mecburi işlem, şekilcilik",
-    "Cümle": "Toplantıya katılım sadece bir formaliteden ibaretti."
-  },
-  {
-    "Harf": "F",
-    "Kelime": "Fütursuz",
-    "Anlamı": "Sonuçlarını umursamadan davranan, çekincesiz.",
-    "Türkçe": "Bilinçli olma durumu",
-    "Cümle": "Fütursuzca konuşmaları herkesi rahatsız etti."
-  },
-  {
-    "Harf": "G",
-    "Kelime": "Girift",
-    "Anlamı": "Karışık, içinden çıkılamayan, çözülmesi zor.",
-    "Türkçe": "Dolaşık, çetrefilli",
-    "Cümle": "Bu mesele oldukça girift görünüyor."
-  },
-  {
-    "Harf": "G",
-    "Kelime": "Giriftlik",
-    "Anlamı": "Bilinmezlik, sır hali.",
-    "Türkçe": "Gizem, muamma",
-    "Cümle": "Onun bakışlarında derin bir giriftlik hissediliyordu."
-  },
-  {
-    "Harf": "G",
-    "Kelime": "Göreceli",
-    "Anlamı": "Kesin olmayan, kişiden kişiye değişebilen.",
-    "Türkçe": "Nispi, bağıl, değişken",
-    "Cümle": "Başarı, herkes için göreceli bir kavramdır."
-  },
-  {
-    "Harf": "G",
-    "Kelime": "Güdüm",
-    "Anlamı": "Yönetme, yönlendirme; bir süreci veya olaylar dizisini düzenleme ve yöneltme işlevlerinin bütünü.",
-    "Türkçe": "Yönlendirme, idare, kontrol",
-    "Cümle": "Şirketin  projeleri, doğru güdüm ile başarılı oldu."
-  },
-  {
-    "Harf": "G",
-    "Kelime": "Gülmecesel",
-    "Anlamı": "Gülmeye uygun, komik eser.",
-    "Türkçe": "Komik, nükteli",
-    "Cümle": "Yazarın üslubu her zaman gülmecesel ve akıcıdır."
-  },
-  {
-    "Harf": "H",
-    "Kelime": "Hakikat",
-    "Anlamı": "Gerçek olan, doğruluk; olayların ya da durumların değişmeyen, nesnel yönü.",
-    "Türkçe": "Gerçek, doğruluk",
-    "Cümle": "Herkesin sustuğu yerde hakikati söylemek cesaret ister."
-  },
-  {
-    "Harf": "H",
-    "Kelime": "Halihazırda",
-    "Anlamı": "Şu anda, mevcut durumda.",
-    "Türkçe": "Şimdilik, şu an, şu anda",
-    "Cümle": "Halihazırda bu proje üzerinde çalışıyoruz."
-  },
-  {
-    "Harf": "H",
-    "Kelime": "Hatıra",
-    "Anlamı": "Geçmişte yaşanmış bir olayın zihinde kalan izi; anı.",
-    "Türkçe": "Anı, geçmiş izlenim",
-    "Cümle": "Bu fotoğraf bana çocukluk hatıralarımı anımsatıyor."
-  },
-  {
-    "Harf": "H",
-    "Kelime": "Hikmet",
-    "Anlamı": "Derin anlam, bilgeliğe dayalı söz veya düşünce; ilahi bilgelik.",
-    "Türkçe": "Bilgelik, anlam, derin mana",
-    "Cümle": "Bu olayda bir hikmet olduğunu düşünüyorum."
-  },
-  {
-    "Harf": "H",
-    "Kelime": "Hissiyat",
-    "Anlamı": "Duygular, hislerle ilgili durum.",
-    "Türkçe": "Duygular, hisler",
-    "Cümle": "Sanatçının eserine bütün hissiyatını kattığı belli oluyor."
-  },
-  {
-    "Harf": "I",
-    "Kelime": "Ilımlılık",
-    "Anlamı": "Aşırı uçlardan uzak, dengeli ve yumuşak tutum.",
-    "Türkçe": "Orta yolculuk, dengelilik",
-    "Cümle": "Siyasette ılımlılık, toplumsal barış için önemlidir."
-  },
-  {
-    "Harf": "I",
-    "Kelime": "Iraksak",
-    "Anlamı": "Uzaklaşma eğiliminde olan, merkezden uzaklaşan.",
-    "Türkçe": "Uzaklaşan, ayrışan",
-    "Cümle": "İki düşünce tarzı giderek daha iraksak hâle geldi."
-  },
-  {
-    "Harf": "I",
-    "Kelime": "Islah",
-    "Anlamı": "Düzeltme, iyileştirme, daha iyi hâle getirme.",
-    "Türkçe": "Onarma, geliştirme",
-    "Cümle": "Su kanalları ıslah edilerek taşkın riski azaltıldı."
-  },
-  {
-    "Harf": "I",
-    "Kelime": "Israrcılık",
-    "Anlamı": "Sürekli olarak kendi isteğinde diretme eğilimi.",
-    "Türkçe": "Direten kişilik özelliği.",
-    "Cümle": "Israrcılığı sayesinde birçok engeli aşmayı başardı."
-  },
-  {
-    "Harf": "I",
-    "Kelime": "Izdırap",
-    "Anlamı": "Derin acı, ruhsal ya da fiziksel sıkıntı.",
-    "Türkçe": "Acı, keder",
-    "Cümle": "Yaşadığı kayıplar, ona tarifsiz bir ızdırap verdi."
-  },
-  {
-    "Harf": "I",
-    "Kelime": "İçerik",
-    "Anlamı": "Bir şeyin içinde bulunan şeyler; bir yazı, konuşma ya da eserin konusu.",
-    "Türkçe": "Muhteva, kapsam",
-    "Cümle": "Bu kitabın içeriği oldukça öğretici ve kapsamlı."
-  },
-  {
-    "Harf": "İ",
-    "Kelime": "İçgüdü",
-    "Anlamı": "Doğuştan gelen, öğrenilmeden yapılan davranış eğilimi.",
-    "Türkçe": "Sezgi, doğal yönelim",
-    "Cümle": "Anne, bebeğini korumak için içgüdüsel olarak hemen harekete geçti."
-  },
-  {
-    "Harf": "İ",
-    "Kelime": "İkircik",
-    "Anlamı": "Kararsızlık, iki şey arasında kalma durumu.",
-    "Türkçe": "Tereddüt, kararsızlık",
-    "Cümle": "Söylediklerinden bir ikircik içinde olduğu anlaşılıyordu."
-  },
-  {
-    "Harf": "İ",
-    "Kelime": "İllet",
-    "Anlamı": "Hastalık; kötü durumun ya da sonucun sebebi.",
-    "Türkçe": "Hastalık, bela, neden",
-    "Cümle": "Bu toplumun en büyük illeti cehalettir."
-  },
-  {
-    "Harf": "İ",
-    "Kelime": "İşlevsellik",
-    "Anlamı": "Bir şeyin amacına uygun şekilde işe yarar ve kullanılabilir olması durumu.",
-    "Türkçe": "Kullanışlılık, fonksiyonellik",
-    "Cümle": "Tasarımda estetik kadar işlevsellik de önemlidir."
-  },
-  {
-    "Harf": "İ",
-    "Kelime": "Jargon",
-    "Anlamı": "Belirli bir meslek,genellikle dışarıdan gelenlerin anlamakta zorlandığı özel dil.",
-    "Türkçe": "Meslek dili, özel terimler",
-    "Cümle": "Hukuk jargonu sadeleştirilmedikçe halk tarafından anlaşılması zor olacak."
-  },
-  {
-    "Harf": "J",
-    "Kelime": "Jenerasyon",
-    "Anlamı": "Aynı dönemde doğmuş, benzer şartlarda yetişmiş insan topluluğu; kuşak.",
-    "Türkçe": "Kuşak, nesil",
-    "Cümle": "Yeni jenerasyon teknolojiye çok daha yatkın."
-  },
-  {
-    "Harf": "J",
-    "Kelime": "Jeopolitik",
-    "Anlamı": "Bir ülkenin coğrafi konumunun, siyaset ve uluslararası ilişkiler üzerindeki etkisini inceleyen alan.",
-    "Türkçe": "Coğrafi siyaset",
-    "Cümle": "Türkiye’nin jeopolitik konumu, onu dünya siyaseti açısından önemli kılıyor."
-  },
-  {
-    "Harf": "J",
-    "Kelime": "Jest",
-    "Anlamı": "Birine karşı incelik, kibarlık veya düşünceyle yapılan küçük ve hoş davranış.",
-    "Türkçe": "İncelik, nazik davranış",
-    "Cümle": "Doğum günümde bana çiçek göndermesi çok hoş bir jestti."
-  },
-  {
-    "Harf": "J",
-    "Kelime": "Jüri",
-    "Anlamı": "Bir yarışma, sınav veya değerlendirmede karar veren uzmanlar kurulu.",
-    "Türkçe": "Seçici kurul",
-    "Cümle": "Yarışmanın kazananını jüri oybirliğiyle belirledi."
-  },
-  {
-    "Harf": "J",
-    "Kelime": "Kadraj",
-    "Anlamı": "Fotoğraf ya da filmde görüntü içine alınan alan, çerçeve.",
-    "Türkçe": "Çerçeve, görüntü alanı",
-    "Cümle": "Fotoğrafın kadrajı çok başarılı, tüm detaylar net bir şekilde görünüyor."
-  },
-  {
-    "Harf": "K",
-    "Kelime": "Kanı",
-    "Anlamı": "Bir kişi ya da grubun bir konu hakkında edindiği düşünce, yargı.",
-    "Türkçe": "Görüş, düşünce, yargı",
-    "Cümle": "Bu konuda benim de farklı bir kanım var."
-  },
-  {
-    "Harf": "K",
-    "Kelime": "Kanıksamak",
-    "Anlamı": "Pek çok yinelenmiş olması dolayısıyla artık etkilenmez olmak, aldırmamak, alışmak.",
-    "Türkçe": "Alışmak",
-    "Cümle": "Onun her sabah geç kalmasını herkes kanıksamıştı."
-  },
-  {
-    "Harf": "K",
-    "Kelime": "Kesit",
-    "Anlamı": "Bir bütünün iç yapısını göstermek amacıyla alınan parça; zaman içinde bir bölüm.",
-    "Türkçe": "Parça, bölüm, örnek",
-    "Cümle": "Film, toplumun farklı kesimlerinden insanlara dair bir kesit sunuyor."
-  },
-  {
-    "Harf": "K",
-    "Kelime": "Kolektif",
-    "Anlamı": "Birlikte yapılan, ortaklaşa olan.",
-    "Türkçe": "Ortak, toplu, birlikte",
-    "Cümle": "Bu proje kolektif bir çalışmanın ürünüydü."
-  },
-  {
-    "Harf": "K",
-    "Kelime": "Kuram",
-    "Anlamı": "Belli bir alandaki olayları ve olguları açıklamak için geliştirilen sistemli düşünce yapısı.",
-    "Türkçe": "Teori, düşünce sistemi",
-    "Cümle": "Einstein’ın görelilik kuramı fizik dünyasında çığır açtı."
-  },
-  {
-    "Harf": "L",
-    "Kelime": "Liberal",
-    "Anlamı": "Özgürlükçü, kısıtlamaları az olan.",
-    "Türkçe": "Serbest",
-    "Cümle": "Yöneticinin liberal tutumu, çalışanların fikirlerini özgürce ifade etmesine olanak tanıyor."
-  },
-  {
-    "Harf": "L",
-    "Kelime": "Lirik",
-    "Anlamı": "Çok etkili, coşkun, genellikle kişisel duyguları dile getiren .",
-    "Türkçe": "Duygusal, şiirsel, coşkulu",
-    "Cümle": "Şiirlerinde hep lirik bir üslup vardır."
-  },
-  {
-    "Harf": "L",
-    "Kelime": "Literatür",
-    "Anlamı": "Herhangi bir bilim dalında yazılmış olan yazıların, yapıtların tümü.",
-    "Türkçe": "Yazın, eser, kaynak",
-    "Cümle": "Konuyla ilgili güncel literatürü incelemelisin."
-  },
-  {
-    "Harf": "L",
-    "Kelime": "Lojik",
-    "Anlamı": "Mantıklı, akıl yürütmeye dayalı; mantık bilimi ile ilgili.",
-    "Türkçe": "Mantıklı, akılcı, sistemli",
-    "Cümle": "Bu problemi çözmek için lojik bir yaklaşım benimsemeliyiz."
-  },
-  {
-    "Harf": "L",
-    "Kelime": "Lüzum",
-    "Anlamı": "Gereklilik, ihtiyaç, zorunluluk.",
-    "Türkçe": "Gerek",
-    "Cümle": "Bu konunun üzerinde durmanın hiçbir lüzumu yok."
-  },
-  {
-    "Harf": "M",
-    "Kelime": "Meşruiyet",
-    "Anlamı": "Yasaya, töreye vb. uygunluk, geçerlilik.",
-    "Türkçe": "Yasallık, uygunluk",
-    "Cümle": "Alınan kararın meşruiyeti tartışılmalıydı."
-  },
-  {
-    "Harf": "M",
-    "Kelime": "Metamorfoz",
-    "Anlamı": "Başka bir biçime, görünüme veya duruma dönüşme, değişim.",
-    "Türkçe": "Dönüşüm, değişim",
-    "Cümle": "Şehir, yıllar içinde ekonomik ve kültürel bir metamorfoz yaşadı."
-  },
-  {
-    "Harf": "M",
-    "Kelime": "Mistik",
-    "Anlamı": "Açıklanamayan, akıl dışı.",
-    "Türkçe": "Gizemli",
-    "Cümle": "Necip Fazıl Türk edebiyatının mistik şairidir."
-  },
-  {
-    "Harf": "M",
-    "Kelime": "Mozaik",
-    "Anlamı": "Küçük parçaların bir araya gelerek oluşturduğu bütün; renkli veya farklı parçaların birleşimi.",
-    "Türkçe": "Çeşitlilik, karışıklık, birleşim",
-    "Cümle": "Şehrin kültürel yapısı adeta bir mozaik gibi çeiştlidir."
-  },
-  {
-    "Harf": "M",
-    "Kelime": "Muamma",
-    "Anlamı": "Anlaşılması veya çözülmesi zor.",
-    "Türkçe": "Bilinmezlik, gizem, sır",
-    "Cümle": "Olayın arkasındaki gerçek hâlâ bir muamma."
-  },
-  {
-    "Harf": "M",
-    "Kelime": "Muğlak",
-    "Anlamı": "Anlaşılması zor, anlaşılmaz, çapraşık, karışık.",
-    "Türkçe": "Karışık",
-    "Cümle": "Bugün yaptığı konuşmada muğlak ifadelere çok yer vermişti."
-  },
-  {
-    "Harf": "M",
-    "Kelime": "Münasebet",
-    "Anlamı": "İlişki, bağlantı veya ilişki biçimi.",
-    "Türkçe": "İlişki, bağ, bağlantı",
-    "Cümle": "Bu konu ile ekonomi arasındaki münasebet iyi araştırılmalı."
-  },
-  {
-    "Harf": "M",
-    "Kelime": "Müzikalite",
-    "Anlamı": "Müzik ile ilgili özellik; ritim, uyum ve ahenk duyusu.",
-    "Türkçe": "Ritim, ahenk, uyum",
-    "Cümle": "Eserin müzikalitesi sade melodilerle bile güçlü bir duygu yaratıyor."
-  },
-  {
-    "Harf": "N",
-    "Kelime": "Nicelik",
-    "Anlamı": "Bir şeyin ölçülebilen yönü, miktarı.",
-    "Türkçe": "Sayıca değer, miktar",
-    "Cümle": "Araştırmada veri niceliği kadar doğruluğu da önemlidir."
-  },
-  {
-    "Harf": "N",
-    "Kelime": "Nihai",
-    "Anlamı": "Bir sürecin sonunda varılan.",
-    "Türkçe": "Sonuncu, sonuç olarak",
-    "Cümle": "Toplantıda alınan karar nihai kabul edildi."
-  },
-  {
-    "Harf": "N",
-    "Kelime": "Nitelik",
-    "Anlamı": "Bir şeyin nasıl ve ne tür olduğunu belirten yön.",
-    "Türkçe": "Özellik, vasıf",
-    "Cümle": "Eğitimde önemli olan, bilginin nitelik bakımından güçlü olmasıdır."
-  },
-  {
-    "Harf": "N",
-    "Kelime": "Nüfuz etmek.",
-    "Anlamı": "Etkili olmak",
-    "Türkçe": "",
-    "Cümle": "Bu dijital dönemde iletişim teknolojileri, yaşamın her alanına nüfuz etmiş"
-  },
-  {
-    "Harf": "N",
-    "Kelime": "Nükte",
-    "Anlamı": "Zekice söylenmiş, düşündürücü ve güldürücü kısa söz.",
-    "Türkçe": "İnce anlamlı söz, espri",
-    "Cümle": "Sohbetlerinde mutlaka bir nükte bulursun."
-  },
-  {
-    "Harf": "O",
-    "Kelime": "Odaklanma",
-    "Anlamı": "Yoğunlaşma.",
-    "Türkçe": "Hedefleme",
-    "Cümle": "Bu sınava odaklan."
-  },
-  {
-    "Harf": "O",
-    "Kelime": "Olgu",
-    "Anlamı": "Sonuç.",
-    "Türkçe": "Vakıa",
-    "Cümle": "Talas Savaşı'nın olguları saymakla bitmez."
-  },
-  {
-    "Harf": "O",
-    "Kelime": "Organizmalar",
-    "Anlamı": "Canlı bir varlığı oluşturan organların tümü.",
-    "Türkçe": "Canlı varlık",
-    "Cümle": "Organizmaların metabolizma faaliyetleri farklılık gösterir."
-  },
-  {
-    "Harf": "O",
-    "Kelime": "Oylum",
-    "Anlamı": "Bir cismin doldurduğu boşluk.",
-    "Türkçe": "Hacim",
-    "Cümle": "Bu kürenin oylumu çapı bilindiğinde kolayca hesaplanabilir ."
-  },
-  {
-    "Harf": "Ö",
-    "Kelime": "Ölçüt",
-    "Anlamı": "Birşeyi değerlendirirken veya karşılaştırırken temel alınan kriter, standart, kıstas.",
-    "Türkçe": "Kıstas",
-    "Cümle": "Gerekli ölçütleri belirlemek yöneticilerin ve bireylerin kendi görevleridir."
-  },
-  {
-    "Harf": "Ö",
-    "Kelime": "Öykünme",
-    "Anlamı": "Birini taklit etme, benzemeye çalışma, başkasının tarzını tutumunu kendine uygulama.",
-    "Türkçe": "Taklit",
-    "Cümle": "Çocuklar çoğu zaman arkadaşlarını öykünme eğilimindedir."
-  },
-  {
-    "Harf": "Ö",
-    "Kelime": "Özdeyiş",
-    "Anlamı": "Kısa anlamlı düşündürücü genel yargı bildiren söz, aforizma niteliğindeki öğüt.",
-    "Türkçe": "Aforizma",
-    "Cümle": "Kitap, özdeyişlerle dolu bir derlemeydi."
-  },
-  {
-    "Harf": "Ö",
-    "Kelime": "Özgü",
-    "Anlamı": "Birine veya bir şeye ait olan.",
-    "Türkçe": "",
-    "Cümle": "Her sanatçının kendine özgü dili vardır."
-  },
-  {
-    "Harf": "Ö",
-    "Kelime": "Özlülük",
-    "Anlamı": "Kısalık, sadelik, ayrıntıdan uzak durma, az sözle çok şey anlatma.",
-    "Türkçe": "Kısalık",
-    "Cümle": "Bazen özlülük şiirin değerini arttırır."
-  },
-  {
-    "Harf": "Ö",
-    "Kelime": "Özümsemek",
-    "Anlamı": "Bir bilgiyi anlayıp onu var olan bilgiyle harmanlayıp birleştirmek.",
-    "Türkçe": "İçselleştirmek",
-    "Cümle": "Yeni bilgileri özümlemeden ilerlemek mümkün değildir."
-  },
-  {
-    "Harf": "Z",
-    "Kelime": "Özveri",
-    "Anlamı": "Bir amaç uğruna veya gerçekleştirilmesi istenen herhangi bir şey için kendi çıkarlarından vazgeçme.",
-    "Türkçe": "Fedakârlık.",
-    "Cümle": "Sınava büyük bir özveri ile çalışıyor."
-  },
-  {
-    "Harf": "P",
-    "Kelime": "Payanda",
-    "Anlamı": "Eğilmiş, yerinden oynamış bir nesnenin düşmemesi için konulan dayak, destek.",
-    "Türkçe": "Destek, dayanak",
-    "Cümle": "Eski duvarın yıkılmaması için yanına bir payanda koydular."
-  },
-  {
-    "Harf": "P",
-    "Kelime": "Perspektif",
-    "Anlamı": "Eşyanın ve nesnelerin uzaktan görünüşü.",
-    "Türkçe": "Bakış açısı, görüş yönü",
-    "Cümle": "Olaylara farklı bir perspektiften bakmak gerekir."
-  },
-  {
-    "Harf": "P",
-    "Kelime": "Polemik",
-    "Anlamı": "Siyasal, bilimsel ya da yazınsal herhangi bir konuda yazılı olarak, basında yapılan sert tartışma, kalem kavgası.",
-    "Türkçe": "Tartışma, fikir çatışması",
-    "Cümle": "İki yazar arasında uzun süren bir polemik yaşandı."
-  },
-  {
-    "Harf": "P",
-    "Kelime": "Popülerlik",
-    "Anlamı": "Popüler olma durumu.",
-    "Türkçe": "Halk arasında tanınmışlık, ün",
-    "Cümle": "Şarkıcının popülerliği son aylarda hızla arttı."
-  },
-  {
-    "Harf": "P",
-    "Kelime": "Potansiyel",
-    "Anlamı": "Varlığı, gücü ortaya çıkmamış olan.",
-    "Türkçe": "Gizli güç, gerçekleşme olasılığı",
-    "Cümle": "Bu öğrencinin büyük bir potansiyeli var."
-  },
-  {
-    "Harf": "R",
-    "Kelime": "Rasyonellik",
-    "Anlamı": "Aklın kurallarına uygun olan, tutarlı, mantık çerçevelerine uygun.",
-    "Türkçe": "Mantıklılık, akla uygunluk",
-    "Cümle": "Bu durumda duygularla değil, rasyonellikle hareket etmeliyiz."
-  },
-  {
-    "Harf": "R",
-    "Kelime": "Realite",
-    "Anlamı": "Var olan her şey.",
-    "Türkçe": "Gerçeklik",
-    "Cümle": "Hayal güzel ama realite o kadar kolay değil."
-  },
-  {
-    "Harf": "R",
-    "Kelime": "Refleks",
-    "Anlamı": "Dıştan gelen bir uyarıma karşı oluşuveren, devinim, salgı gibi tepkiler biçiminde kendini gösteren.",
-    "Türkçe": "Tepki, ani hareket",
-    "Cümle": "Topu hemen yakalaması tamamen refleksle oldu."
-  },
-  {
-    "Harf": "S",
-    "Kelime": "Salık vermek",
-    "Anlamı": "Önermek,teklif etmek.",
-    "Türkçe": "Tavsiye etmek",
-    "Cümle": "Arkadaşım bu kitabı bana salık verdi."
-  },
-  {
-    "Harf": "S",
-    "Kelime": "Salt",
-    "Anlamı": "İçine, kendisine yabancı hiçbir şey karışmamış, arı.",
-    "Türkçe": "Sadece",
-    "Cümle": "Salt bunları konuşmaktan işte hiç ilerleme gösteremedin."
-  },
-  {
-    "Harf": "S",
-    "Kelime": "Sav",
-    "Anlamı": "Savunulan düşünce .",
-    "Türkçe": "İddia",
-    "Cümle": "Bu sav pek çok kişi tarafından desteklenir."
-  },
-  {
-    "Harf": "S",
-    "Kelime": "Seçki",
-    "Anlamı": "Seçilmiş eser.",
-    "Türkçe": "Antoloji",
-    "Cümle": "Ben seçki şiirlere bayılırım."
-  },
-  {
-    "Harf": "S",
-    "Kelime": "Silüet",
-    "Anlamı": "Gölge görüntüler.",
-    "Türkçe": "Gölge",
-    "Cümle": "Kapının yanından geçerken bir silüet gördüm."
-  },
-  {
-    "Harf": "S",
-    "Kelime": "Simge",
-    "Anlamı": "Sembol.",
-    "Türkçe": "İşaret",
-    "Cümle": "Bu simgelerin anlamı çok derin."
-  },
-  {
-    "Harf": "S",
-    "Kelime": "Süreğen",
-    "Anlamı": "Sürüp giden.",
-    "Türkçe": "Hiç ara vermeden devam eden",
-    "Cümle": "Bu yağmur süreğene benziyor."
-  },
-  {
-    "Harf": "Ş",
-    "Kelime": "Şematik",
-    "Anlamı": "Bir nesnenin, bir organın vb. genel düzenini gösteren.",
-    "Türkçe": "",
-    "Cümle": "Öğretmen konuyu tahtada şematik olarak anlattı."
-  },
-  {
-    "Harf": "T",
-    "Kelime": "Tasvip etme",
-    "Anlamı": "Bir davranışı, düşünceyi, ya da kararı uygun bulmak, onaylamak.",
-    "Türkçe": "Onaylamak",
-    "Cümle": "Müdür yapılan değişiklikleri tasvip etmedi."
-  },
-  {
-    "Harf": "T",
-    "Kelime": "Tekdüzelik",
-    "Anlamı": "Herşeyin aynı biçimede değişime uğramadan devam etmesi, çeşitlilik olmaması, monotonluk.",
-    "Türkçe": "Monotonluk",
-    "Cümle": "Hayatta renk herzaman tekdüzeliği bozar ."
-  },
-  {
-    "Harf": "T",
-    "Kelime": "Tını",
-    "Anlamı": "Bir sesin kendine özgü yankısı, ekosu, karakteri.",
-    "Türkçe": "Ezgi",
-    "Cümle": "Tınısı yumuşak bir rüzgar gibidir ."
-  },
-  {
-    "Harf": "T",
-    "Kelime": "Tolerans",
-    "Anlamı": "Hataları görmezden gelme erdemi, farklı görüşlere hoşgörülü olma durumu.",
-    "Türkçe": "Anlayış",
-    "Cümle": "Hatalara tolerans göstermek büyüklüktür."
-  },
-  {
-    "Harf": "T",
-    "Kelime": "Türbülans",
-    "Anlamı": "Akışkanın düzensiz hareketi, yalpalaması, gündelik hayattaki karışıklık, sarsıntı, kaos.",
-    "Türkçe": "Sarsıntı",
-    "Cümle": "Uçuş esnasında yaşanan türbülans herkesi tedirgin etti."
-  },
-  {
-    "Harf": "U",
-    "Kelime": "Uğraş",
-    "Anlamı": "Sürekli yapılan iş, uğraşılan alan.",
-    "Türkçe": "Meşguliyet",
-    "Cümle": "Her insanın bir uğraşı olmalı."
-  },
-  {
-    "Harf": "U",
-    "Kelime": "Ulam",
-    "Anlamı": "Aynı türeden kavramları içeren grup, sınıf veya kategori.",
-    "Türkçe": "Tür",
-    "Cümle": "Canlılar iki ana ulama ayrılır."
-  },
-  {
-    "Harf": "U",
-    "Kelime": "Usanmak",
-    "Anlamı": "Bir şeyden bıkmak, sıkılmak, artık yapmak istememek.",
-    "Türkçe": "Yılmak",
-    "Cümle": "İnsan bazen herşeyden usanıyor."
-  },
-  {
-    "Harf": "U",
-    "Kelime": "Uyarlama",
-    "Anlamı": "Bir yapıtın (hikaye, roman, oyun, vb. ) başka bir biçime dönüştürülmesi, uygun hale getirilmesi.",
-    "Türkçe": "Uygunlaştırma",
-    "Cümle": "Uyarlama yapılırken editörler bazı şeyleri değiştirme gereği duyabilir."
-  },
-  {
-    "Harf": "U",
-    "Kelime": "Uzlaşmak",
-    "Anlamı": "Farklı görüşteki kişilerin ortak bir noktada karara varması.",
-    "Türkçe": "Ortak karar almak",
-    "Cümle": "Uzlaşmak sabır ve empati gerektrir."
-  },
-  {
-    "Harf": "Ü",
-    "Kelime": "Üçleme",
-    "Anlamı": "Birbiriyle bağlantılı üç bölümden oluşan eser veya anlatım.",
-    "Türkçe": "Üç parçalı eser",
-    "Cümle": "Yazarın romanları bir üçleme halinde yayınlandı."
-  },
-  {
-    "Harf": "Ü",
-    "Kelime": "Ünsüzleşmek",
-    "Anlamı": "Söz ve davranış bakımından geri çekilmek.",
-    "Türkçe": "Sessizleşmek, içine kapanmak",
-    "Cümle": "Toplamtıda fikirlerini söylemekten çekinen genç, giderek sessizleşti."
-  },
-  {
-    "Harf": "Ü",
-    "Kelime": "Üryan",
-    "Anlamı": "Çıplak, süssüz,  sadelikte olan.",
-    "Türkçe": "Sade",
-    "Cümle": "Yazar karakterin ruh halini üryan bir şekilde tasvir etmişti."
-  },
-  {
-    "Harf": "Ü",
-    "Kelime": "Üstgörünüm",
-    "Anlamı": "Yüzeydeki görünüm, dış izlenim.",
-    "Türkçe": "Dış görünüş, yüzey",
-    "Cümle": "Karakterin gerçek duyguları, üstgörünümün aksine cok farklıydı."
-  },
-  {
-    "Harf": "Ü",
-    "Kelime": "Ütümsüz",
-    "Anlamı": "Düzgün, olmayan şekilsiz.",
-    "Türkçe": "Şekilsiz",
-    "Cümle": "Ev ve kıyafetleri karakterin ütümsüz hayatını yansıtıyordu."
-  },
-  {
-    "Harf": "V",
-    "Kelime": "Varlıktaş",
-    "Anlamı": "Aynı varoluş durumuna sahip olan, benzer varlık veya aynı türden olan anlamına gelir.",
-    "Türkçe": "Ortak varoluş sahibi",
-    "Cümle": "İnsanlar her ne kadar farklı görünselerde de duygularında varlıktaştır."
-  },
-  {
-    "Harf": "V",
-    "Kelime": "Velinimet",
-    "Anlamı": "Büyük iyilik yapan hayırsever kişidir.",
-    "Türkçe": "İyiliksever",
-    "Cümle": "Kasabanın fakir çocukları eski velinimet sayesinde eğitim görebiliyordu."
-  },
-  {
-    "Harf": "V",
-    "Kelime": "Velud",
-    "Anlamı": "Çok konuşan sözleri bol.",
-    "Türkçe": "Sözlü, konuşkan",
-    "Cümle": "Romanda ki karakter toplantılarda cok velùd bir karakterdi."
-  },
-  {
-    "Harf": "V",
-    "Kelime": "Virtüöz",
-    "Anlamı": "Herhangi bir müzik aletini büyük ustalıkla çalabilen sanatçılar için kullanılır.",
-    "Türkçe": "Usta sanatçı",
-    "Cümle": "Piyanoyu o kadar iyi çaldı ki tam bir virtüöz gibiydi."
-  },
-  {
-    "Harf": "V",
-    "Kelime": "Vitrinden uzaklaşmak",
-    "Anlamı": "Gösterişten, dış görünüşten veya yüzeysel ilgiden uzaklaşmak anlamındadir.",
-    "Türkçe": "Abartıdan kaçınmak",
-    "Cümle": "Toplum olarak vitrinden uzaklaşıp samimiyete yönelmeliyiz."
-  },
-  {
-    "Harf": "Y",
-    "Kelime": "Yadsımak",
-    "Anlamı": "Bir şeyi onaylamamak, kabul etmemek , önemsememek anlamına gelir",
-    "Türkçe": "Reddetmek",
-    "Cümle": "Gerçekleri sürekli yadsımak sorunları çözmeyi zorlaştırır."
-  },
-  {
-    "Harf": "Y",
-    "Kelime": "Yazın",
-    "Anlamı": "Olay, duygu , düşünce ve hayallerin dil aracılığı ile biçimlendirilmesi sanatıdır.",
-    "Türkçe": "Yazı sanatı",
-    "Cümle": "Bu kitap Türk yazın tarihinin önemli örneklerinden biridir."
-  },
-  {
-    "Harf": "Y",
-    "Kelime": "Yazınsal tutkal",
-    "Anlamı": "Bir metinde farklı bölümleri, olayları veya fikirleri bir arada tutan metnin bütünlüğünü sağlayan unsur",
-    "Türkçe": "Bağlayıcı öge",
-    "Cümle": "Karakterin duyguları metinde yazınsal tutkal görevi görüyor."
-  },
-  {
-    "Harf": "Y",
-    "Kelime": "Yeğlemek",
-    "Anlamı": "Diğerlerinden daha üstün görüp bir şeye yönelmek, yeğ tutmak, tercih etmek.",
-    "Türkçe": "Tercih etmek",
-    "Cümle": "Hafta sonu gezmektense evde dinlenmeyi yeğlerim."
-  },
-  {
-    "Harf": "Y",
-    "Kelime": "Yeknesak",
-    "Anlamı": "Monoton, tekdüze.",
-    "Türkçe": "Sıradan",
-    "Cümle": "Belki de dünyanın hayatı bizimkinden daha yeknesak ve bilhassa daha tekrarlıdır."
-  },
-  {
-    "Harf": "Y",
-    "Kelime": "Yeti",
-    "Anlamı": "Bir işi yapabilme gücü .",
-    "Türkçe": "Olgunluk",
-    "Cümle": "Çocuğun fiziksel ve zihinsel yetisi okul ve aile tarafından desteklenmelidir."
-  },
-  {
-    "Harf": "Y",
-    "Kelime": "Yetke",
-    "Anlamı": "Bir kişinin bir iş veya konuda sahip olduğu yetki, yetenek ve sorumluluğu anlamına gelir.",
-    "Türkçe": "Güç, hak, sorumluluk alanı",
-    "Cümle": "Müdür bu konuda tam yetkeye sahiptir."
-  },
-  {
-    "Harf": "Z",
-    "Kelime": "Zanaat",
-    "Anlamı": "El becerisiyle yapılan ustalık gerektiren iş veya meslek.",
-    "Türkçe": "Ustalık",
-    "Cümle": "Zanaatkarlar, kültürün sesiz koruyucularıdır."
-  },
-  {
-    "Harf": "Z",
-    "Kelime": "Zarafet",
-    "Anlamı": "Davranışta konuşmada ve görünüşte incelik, hoşuk, nezaket.",
-    "Türkçe": "Kibar davranış",
-    "Cümle": "Onun zarafeti herkesi büyüledi."
-  },
-  {
-    "Harf": "Z",
-    "Kelime": "Zıtlık",
-    "Anlamı": "Birbirine karşıt, ters veya uyumsuz olma durumu.",
-    "Türkçe": "Terslik",
-    "Cümle": "Zıtlık sanatta dengeyi ve ilerleyişi sağlar."
-  },
-  {
-    "Harf": "Z",
-    "Kelime": "Zihniyet",
-    "Anlamı": "Bir kişinin veya toplumun düşünme biçimi, bakış açısı, anlayışı.",
-    "Türkçe": "Felsefe",
-    "Cümle": "Toplumların zihniyeti zamanla değişir."
-  },
-  {
-    "Harf": "Z",
-    "Kelime": "Zirve",
-    "Anlamı": "Bir şeyin en yüksek noktası, en üst düzeyi.",
-    "Türkçe": "Doruk",
-    "Cümle": "Spocunun kariyeri zirveye ulaştı."
-  }
-]
+        const words = [{
+                "Harf": "A",
+                "Kelime": "Ahenk",
+                "Anlamı": "Uyum,düzen.",
+                "Türkçe": "Uyum",
+                "Cümle": "Bu dizelerin ahenk içinde olduğu görülür."
+            },
+            {
+                "Harf": "A",
+                "Kelime": "Aktüel",
+                "Anlamı": "Güncel,yakın zamanda gerçekleşmiş olan.",
+                "Türkçe": "Güncel",
+                "Cümle": "Market zincirleri her hafta aktüel ürünler kataloğu yayınlar."
+            },
+            {
+                "Harf": "A",
+                "Kelime": "Alafranga",
+                "Anlamı": "Batı tarzında,Türk geleneklerine uygun olmayan.",
+                "Türkçe": "Batı'yı benimseyen kimse",
+                "Cümle": "Günümüzdeki alafranga gençlerin sayısı gittikçe artıyor."
+            },
+            {
+                "Harf": "A",
+                "Kelime": "Alaturka",
+                "Anlamı": "Türk geleneklerine uygun olan.",
+                "Türkçe": "Türklere özgü olan",
+                "Cümle": "Alaturka misafirperverliğiyle bizi kapıda karşıladılar."
+            },
+            {
+                "Harf": "A",
+                "Kelime": "Alegorik",
+                "Anlamı": "Temsili",
+                "Türkçe": "",
+                "Cümle": "Türk edebiyatında alegorik anlatıma sahip birçok eser var."
+            },
+            {
+                "Harf": "A",
+                "Kelime": "Anımsamak",
+                "Anlamı": "Hatırlamak.",
+                "Türkçe": "Hatırlamak",
+                "Cümle": "O çocuğu görünce bir anlık kuzenimi anımsadım."
+            },
+            {
+                "Harf": "A",
+                "Kelime": "Arı dil",
+                "Anlamı": "Öz Türkçe.",
+                "Türkçe": "Sade",
+                "Cümle": "Bu yazarın hikayeleri arı dile uygundur."
+            },
+            {
+                "Harf": "B",
+                "Kelime": "Bağdaşmak",
+                "Anlamı": "Her yönden birbiriyle uyuşmak, kaynaşmak, iyi anlaşmak, uzlaşmak, uymak.",
+                "Türkçe": "Uymak, birbirine uygun olmak",
+                "Cümle": "Onun düşünceleri benimkilerle pek bağdaşmıyor."
+            },
+            {
+                "Harf": "B",
+                "Kelime": "Banal",
+                "Anlamı": "Herkesçe bilinen, anlaşılan, herkesçe kullanılan sözcük, söz.",
+                "Türkçe": "Sıradan, basit, herkesin söylediği türden",
+                "Cümle": "Bu konu artık çok banal, herkes aynı şeyleri söylüyor."
+            },
+            {
+                "Harf": "B",
+                "Kelime": "Basmakalıp",
+                "Anlamı": "Hiçbir özgün yönü bulunmayan, bilinenden değişik olmayan, her zamankini, var olanı yineleyen.",
+                "Türkçe": "Kalıplaşmış, özgün olmayan",
+                "Cümle": "Filmin sonu tamamen basmakalıptı, hiçbir sürpriz yoktu."
+            },
+            {
+                "Harf": "B",
+                "Kelime": "Betik",
+                "Anlamı": "Her türlü yazılı şey.",
+                "Türkçe": "Yazı, senaryo, kısa metin",
+                "Cümle": "Öğretmen bizden kısa bir betik yazmamızı istedi."
+            },
+            {
+                "Harf": "B",
+                "Kelime": "Biçem",
+                "Anlamı": "Anlatma biçimi, deyiş ya da yapış biçimi.",
+                "Türkçe": "Üslup, tarz, anlatım biçimi",
+                "Cümle": "Yazarın biçemi sade ama etkileyici."
+            },
+            {
+                "Harf": "B",
+                "Kelime": "Bulgu",
+                "Anlamı": "Var olduğu halde o zamana değin varlığı bilinmeyen bir şeyi bulup ortaya çıkarma işi.",
+                "Türkçe": "Elde edilen bilgi, kanıt, sonuç",
+                "Cümle": "Deneyden ilginç bir bulgu elde ettik."
+            },
+            {
+                "Harf": "C",
+                "Kelime": "Cazibe",
+                "Anlamı": "Etkileme, çekim gücü.",
+                "Türkçe": "Çekicilik, albeni",
+                "Cümle": "Onun doğal cazibesi, kalabalıklar arasında bile dikkat çekiyordu."
+            },
+            {
+                "Harf": "C",
+                "Kelime": "Cevap",
+                "Anlamı": "Bir soruya, duruma ya da çağrıya verilen karşılık.",
+                "Türkçe": "Karşılık, yanıt",
+                "Cümle": "Soruma hemen cevap verdiğin için teşekkür ederim."
+            },
+            {
+                "Harf": "C",
+                "Kelime": "Ciddiyet",
+                "Anlamı": "Davranış veya durumun ağırbaşlılık ve önem taşıması.",
+                "Türkçe": "Önem, resmiyet, disiplin",
+                "Cümle": "İş görüşmelerinde ciddiyetini koruması takdir topladı."
+            },
+            {
+                "Harf": "C",
+                "Kelime": "Cümle",
+                "Anlamı": "Bir düşünceyi anlatan, anlamlı kelime dizisi.",
+                "Türkçe": "Düşünce ya da duyguyu anlatan söz dizimi",
+                "Cümle": "Bugün çok güzel bir cümle kurdun, anlamı çok derindi."
+            },
+            {
+                "Harf": "C",
+                "Kelime": "Cürret",
+                "Anlamı": "Cesaretin sınırlarını zorlayan, çoğu zaman haddini aşan davranış.",
+                "Türkçe": "Gözü peklik, küstahlık",
+                "Cümle": "Bu kadar açıkça karşı çıkmaya nasıl cürret etti, anlamıyorum."
+            },
+            {
+                "Harf": "Ç",
+                "Kelime": "Çağdaş",
+                "Anlamı": "Aynı anda yaşayan,çağın şartlarına uygun yaşayan.",
+                "Türkçe": "Aynı çağda yaşayan",
+                "Cümle": "Bizim bu yolda çağdaş zihinlere ihtiyacımız var."
+            },
+            {
+                "Harf": "Ç",
+                "Kelime": "Çağrışım",
+                "Anlamı": "Hatırlatma.",
+                "Türkçe": "Bazı şeylerin anımsanması",
+                "Cümle": "Bu eserler rönesansı çağrıştırıyor."
+            },
+            {
+                "Harf": "Ç",
+                "Kelime": "Çeşni",
+                "Anlamı": "Hoşa giden özellikler.",
+                "Türkçe": "Çeşit",
+                "Cümle": "Bu yemek çeşnili."
+            },
+            {
+                "Harf": "Ç",
+                "Kelime": "Çevirmen",
+                "Anlamı": "Bir yazıyı bir dilden başka dile çevirendir.",
+                "Türkçe": "Dilmaç",
+                "Cümle": "Bu konuşmaları anlayabilmek için çevirmen lazım."
+            },
+            {
+                "Harf": "Ç",
+                "Kelime": "Çıkarım",
+                "Anlamı": "Sonuç çıkarma işi.",
+                "Türkçe": "Önermeleri karşılaştırarak varılan sonuç",
+                "Cümle": "Yaşanan olaylar hakkında çıkarım yapılmazsa durum vahim olacak."
+            },
+            {
+                "Harf": "D",
+                "Kelime": "Dağarcık",
+                "Anlamı": "Küçük torba, kese, bilgi kelime deneyim hazinesi, öğrenebilme yetisi.",
+                "Türkçe": "Kese",
+                "Cümle": "Bu yemek çeşnili güzel olmuş."
+            },
+            {
+                "Harf": "D",
+                "Kelime": "Dejenere",
+                "Anlamı": "Aslını yitirmiş, niteliğini kaybetmiş, bozulmuş (biyolojik anlamı) kalıtsallığını yitirmiş hücre.",
+                "Türkçe": "Yozlaşmış, bozulmuş",
+                "Cümle": "Bazı sanat kültürleri tamamen dejenere hale geldi."
+            },
+            {
+                "Harf": "D",
+                "Kelime": "Devinim",
+                "Anlamı": "Hareket, kımıldama, yer değiştirme, ilerleme, gelişim, süreci.",
+                "Türkçe": "Değişim",
+                "Cümle": "Doğadaki devinim hiç durmadan devam eder ."
+            },
+            {
+                "Harf": "D",
+                "Kelime": "Dehr",
+                "Anlamı": "Zaman, çağ, dönem, insan yaşamının uzun süren süreci.",
+                "Türkçe": "Zaman, çağ, dönem",
+                "Cümle": "Dehrin yükü ağır gelir bazı insanlara."
+            },
+            {
+                "Harf": "D",
+                "Kelime": "Dingin",
+                "Anlamı": "Sessiz, sakin, huzurlu, durgun, duygusal olarak dengede olan.",
+                "Türkçe": "Dinmiş",
+                "Cümle": "Sabahın sessiz dinginliği içimi rahatlattı."
+            },
+            {
+                "Harf": "E",
+                "Kelime": "Edimsel",
+                "Anlamı": "Bir şeyin eyleme, davranışa veya uygulamaya dayanmasını anlatan kelimedir.",
+                "Türkçe": "Eylemli, uygulamalı",
+                "Cümle": "Ögretmen, öğrencilerin edimsel becerilerini geliştirmek için uygulamalar yaptı."
+            },
+            {
+                "Harf": "E",
+                "Kelime": "Egzotik",
+                "Anlamı": "Yabancı ülkelerden gelen farklı, alışılmadık, ilginç ve çekici olan şeylere denir.",
+                "Türkçe": "Alışılmışın dışı, değişik",
+                "Cümle": "Gittiğimiz resttorantta egzotik meyve ve baharatlar kullanılıyordu."
+            },
+            {
+                "Harf": "E",
+                "Kelime": "Eğreti",
+                "Anlamı": "Bir şeyin geçici, tam yerleşmemiş, kalıcı olmayan ya da doğallıktan uzak olmasıdır.",
+                "Türkçe": "Geçici, yapay",
+                "Cümle": "Bu mutluluk bana eğreti geliyor, sanki her an bitecekmiş gibi."
+            },
+            {
+                "Harf": "E",
+                "Kelime": "Empoze",
+                "Anlamı": "Bir kuralı, davranışı veya düşünceyi başkasına zorla kabul ettirmek demektir.",
+                "Türkçe": "Dayatmak, baskı yapmak",
+                "Cümle": "Kimseye kendi fikirlerini empoze etmeye hakkın yok."
+            },
+            {
+                "Harf": "E",
+                "Kelime": "Erek",
+                "Anlamı": "Bir işin yapılmak istendiği amaç ve  ulaşılmak istenen hedef demektir.",
+                "Türkçe": "Amaç, gaye",
+                "Cümle": "Bu projenin temel ereği çevre bilincini arttırmaktır."
+            },
+            {
+                "Harf": "F",
+                "Kelime": "Farkındalık",
+                "Anlamı": "Kişinin kendi düşünce, duygu ve davranışlarının bilincinde olması.",
+                "Türkçe": "Umursamaz, kaygısız",
+                "Cümle": "Duygusal farkındalık, kişisel gelişimin temel taşlarından biridir."
+            },
+            {
+                "Harf": "F",
+                "Kelime": "Felsefe",
+                "Anlamı": "Varlığı, bilgiyi, yaşamı sorgulayan düşünce disiplini.",
+                "Türkçe": "Düşünce sistemi",
+                "Cümle": "Hayata dair geliştirdiği felsefe, onu diğerlerinden ayırıyordu."
+            },
+            {
+                "Harf": "F",
+                "Kelime": "Fonetik",
+                "Anlamı": "Ses bilimi; konuşma seslerini inceleyen dil bilimi dalı.",
+                "Türkçe": "Ses yapısı bilgisi",
+                "Cümle": "Dil öğreniminde fonetik çalışmaları büyük önem taşır."
+            },
+            {
+                "Harf": "F",
+                "Kelime": "Formalite",
+                "Anlamı": "Zorunlu ama çoğu zaman içeriği olmayan işlem veya davranış.",
+                "Türkçe": "Mecburi işlem, şekilcilik",
+                "Cümle": "Toplantıya katılım sadece bir formaliteden ibaretti."
+            },
+            {
+                "Harf": "F",
+                "Kelime": "Fütursuz",
+                "Anlamı": "Sonuçlarını umursamadan davranan, çekincesiz.",
+                "Türkçe": "Bilinçli olma durumu",
+                "Cümle": "Fütursuzca konuşmaları herkesi rahatsız etti."
+            },
+            {
+                "Harf": "G",
+                "Kelime": "Girift",
+                "Anlamı": "Karışık, içinden çıkılamayan, çözülmesi zor.",
+                "Türkçe": "Dolaşık, çetrefilli",
+                "Cümle": "Bu mesele oldukça girift görünüyor."
+            },
+            {
+                "Harf": "G",
+                "Kelime": "Giriftlik",
+                "Anlamı": "Bilinmezlik, sır hali.",
+                "Türkçe": "Gizem, muamma",
+                "Cümle": "Onun bakışlarında derin bir giriftlik hissediliyordu."
+            },
+            {
+                "Harf": "G",
+                "Kelime": "Göreceli",
+                "Anlamı": "Kesin olmayan, kişiden kişiye değişebilen.",
+                "Türkçe": "Nispi, bağıl, değişken",
+                "Cümle": "Başarı, herkes için göreceli bir kavramdır."
+            },
+            {
+                "Harf": "G",
+                "Kelime": "Güdüm",
+                "Anlamı": "Yönetme, yönlendirme; bir süreci veya olaylar dizisini düzenleme ve yöneltme işlevlerinin bütünü.",
+                "Türkçe": "Yönlendirme, idare, kontrol",
+                "Cümle": "Şirketin  projeleri, doğru güdüm ile başarılı oldu."
+            },
+            {
+                "Harf": "G",
+                "Kelime": "Gülmecesel",
+                "Anlamı": "Gülmeye uygun, komik eser.",
+                "Türkçe": "Komik, nükteli",
+                "Cümle": "Yazarın üslubu her zaman gülmecesel ve akıcıdır."
+            },
+            {
+                "Harf": "H",
+                "Kelime": "Hakikat",
+                "Anlamı": "Gerçek olan, doğruluk; olayların ya da durumların değişmeyen, nesnel yönü.",
+                "Türkçe": "Gerçek, doğruluk",
+                "Cümle": "Herkesin sustuğu yerde hakikati söylemek cesaret ister."
+            },
+            {
+                "Harf": "H",
+                "Kelime": "Halihazırda",
+                "Anlamı": "Şu anda, mevcut durumda.",
+                "Türkçe": "Şimdilik, şu an, şu anda",
+                "Cümle": "Halihazırda bu proje üzerinde çalışıyoruz."
+            },
+            {
+                "Harf": "H",
+                "Kelime": "Hatıra",
+                "Anlamı": "Geçmişte yaşanmış bir olayın zihinde kalan izi; anı.",
+                "Türkçe": "Anı, geçmiş izlenim",
+                "Cümle": "Bu fotoğraf bana çocukluk hatıralarımı anımsatıyor."
+            },
+            {
+                "Harf": "H",
+                "Kelime": "Hikmet",
+                "Anlamı": "Derin anlam, bilgeliğe dayalı söz veya düşünce; ilahi bilgelik.",
+                "Türkçe": "Bilgelik, anlam, derin mana",
+                "Cümle": "Bu olayda bir hikmet olduğunu düşünüyorum."
+            },
+            {
+                "Harf": "H",
+                "Kelime": "Hissiyat",
+                "Anlamı": "Duygular, hislerle ilgili durum.",
+                "Türkçe": "Duygular, hisler",
+                "Cümle": "Sanatçının eserine bütün hissiyatını kattığı belli oluyor."
+            },
+            {
+                "Harf": "I",
+                "Kelime": "Ilımlılık",
+                "Anlamı": "Aşırı uçlardan uzak, dengeli ve yumuşak tutum.",
+                "Türkçe": "Orta yolculuk, dengelilik",
+                "Cümle": "Siyasette ılımlılık, toplumsal barış için önemlidir."
+            },
+            {
+                "Harf": "I",
+                "Kelime": "Iraksak",
+                "Anlamı": "Uzaklaşma eğiliminde olan, merkezden uzaklaşan.",
+                "Türkçe": "Uzaklaşan, ayrışan",
+                "Cümle": "İki düşünce tarzı giderek daha iraksak hâle geldi."
+            },
+            {
+                "Harf": "I",
+                "Kelime": "Islah",
+                "Anlamı": "Düzeltme, iyileştirme, daha iyi hâle getirme.",
+                "Türkçe": "Onarma, geliştirme",
+                "Cümle": "Su kanalları ıslah edilerek taşkın riski azaltıldı."
+            },
+            {
+                "Harf": "I",
+                "Kelime": "Israrcılık",
+                "Anlamı": "Sürekli olarak kendi isteğinde diretme eğilimi.",
+                "Türkçe": "Direten kişilik özelliği.",
+                "Cümle": "Israrcılığı sayesinde birçok engeli aşmayı başardı."
+            },
+            {
+                "Harf": "I",
+                "Kelime": "Izdırap",
+                "Anlamı": "Derin acı, ruhsal ya da fiziksel sıkıntı.",
+                "Türkçe": "Acı, keder",
+                "Cümle": "Yaşadığı kayıplar, ona tarifsiz bir ızdırap verdi."
+            },
+            {
+                "Harf": "I",
+                "Kelime": "İçerik",
+                "Anlamı": "Bir şeyin içinde bulunan şeyler; bir yazı, konuşma ya da eserin konusu.",
+                "Türkçe": "Muhteva, kapsam",
+                "Cümle": "Bu kitabın içeriği oldukça öğretici ve kapsamlı."
+            },
+            {
+                "Harf": "İ",
+                "Kelime": "İçgüdü",
+                "Anlamı": "Doğuştan gelen, öğrenilmeden yapılan davranış eğilimi.",
+                "Türkçe": "Sezgi, doğal yönelim",
+                "Cümle": "Anne, bebeğini korumak için içgüdüsel olarak hemen harekete geçti."
+            },
+            {
+                "Harf": "İ",
+                "Kelime": "İkircik",
+                "Anlamı": "Kararsızlık, iki şey arasında kalma durumu.",
+                "Türkçe": "Tereddüt, kararsızlık",
+                "Cümle": "Söylediklerinden bir ikircik içinde olduğu anlaşılıyordu."
+            },
+            {
+                "Harf": "İ",
+                "Kelime": "İllet",
+                "Anlamı": "Hastalık; kötü durumun ya da sonucun sebebi.",
+                "Türkçe": "Hastalık, bela, neden",
+                "Cümle": "Bu toplumun en büyük illeti cehalettir."
+            },
+            {
+                "Harf": "İ",
+                "Kelime": "İşlevsellik",
+                "Anlamı": "Bir şeyin amacına uygun şekilde işe yarar ve kullanılabilir olması durumu.",
+                "Türkçe": "Kullanışlılık, fonksiyonellik",
+                "Cümle": "Tasarımda estetik kadar işlevsellik de önemlidir."
+            },
+            {
+                "Harf": "İ",
+                "Kelime": "Jargon",
+                "Anlamı": "Belirli bir meslek,genellikle dışarıdan gelenlerin anlamakta zorlandığı özel dil.",
+                "Türkçe": "Meslek dili, özel terimler",
+                "Cümle": "Hukuk jargonu sadeleştirilmedikçe halk tarafından anlaşılması zor olacak."
+            },
+            {
+                "Harf": "J",
+                "Kelime": "Jenerasyon",
+                "Anlamı": "Aynı dönemde doğmuş, benzer şartlarda yetişmiş insan topluluğu; kuşak.",
+                "Türkçe": "Kuşak, nesil",
+                "Cümle": "Yeni jenerasyon teknolojiye çok daha yatkın."
+            },
+            {
+                "Harf": "J",
+                "Kelime": "Jeopolitik",
+                "Anlamı": "Bir ülkenin coğrafi konumunun, siyaset ve uluslararası ilişkiler üzerindeki etkisini inceleyen alan.",
+                "Türkçe": "Coğrafi siyaset",
+                "Cümle": "Türkiye’nin jeopolitik konumu, onu dünya siyaseti açısından önemli kılıyor."
+            },
+            {
+                "Harf": "J",
+                "Kelime": "Jest",
+                "Anlamı": "Birine karşı incelik, kibarlık veya düşünceyle yapılan küçük ve hoş davranış.",
+                "Türkçe": "İncelik, nazik davranış",
+                "Cümle": "Doğum günümde bana çiçek göndermesi çok hoş bir jestti."
+            },
+            {
+                "Harf": "J",
+                "Kelime": "Jüri",
+                "Anlamı": "Bir yarışma, sınav veya değerlendirmede karar veren uzmanlar kurulu.",
+                "Türkçe": "Seçici kurul",
+                "Cümle": "Yarışmanın kazananını jüri oybirliğiyle belirledi."
+            },
+            {
+                "Harf": "J",
+                "Kelime": "Kadraj",
+                "Anlamı": "Fotoğraf ya da filmde görüntü içine alınan alan, çerçeve.",
+                "Türkçe": "Çerçeve, görüntü alanı",
+                "Cümle": "Fotoğrafın kadrajı çok başarılı, tüm detaylar net bir şekilde görünüyor."
+            },
+            {
+                "Harf": "K",
+                "Kelime": "Kanı",
+                "Anlamı": "Bir kişi ya da grubun bir konu hakkında edindiği düşünce, yargı.",
+                "Türkçe": "Görüş, düşünce, yargı",
+                "Cümle": "Bu konuda benim de farklı bir kanım var."
+            },
+            {
+                "Harf": "K",
+                "Kelime": "Kanıksamak",
+                "Anlamı": "Pek çok yinelenmiş olması dolayısıyla artık etkilenmez olmak, aldırmamak, alışmak.",
+                "Türkçe": "Alışmak",
+                "Cümle": "Onun her sabah geç kalmasını herkes kanıksamıştı."
+            },
+            {
+                "Harf": "K",
+                "Kelime": "Kesit",
+                "Anlamı": "Bir bütünün iç yapısını göstermek amacıyla alınan parça; zaman içinde bir bölüm.",
+                "Türkçe": "Parça, bölüm, örnek",
+                "Cümle": "Film, toplumun farklı kesimlerinden insanlara dair bir kesit sunuyor."
+            },
+            {
+                "Harf": "K",
+                "Kelime": "Kolektif",
+                "Anlamı": "Birlikte yapılan, ortaklaşa olan.",
+                "Türkçe": "Ortak, toplu, birlikte",
+                "Cümle": "Bu proje kolektif bir çalışmanın ürünüydü."
+            },
+            {
+                "Harf": "K",
+                "Kelime": "Kuram",
+                "Anlamı": "Belli bir alandaki olayları ve olguları açıklamak için geliştirilen sistemli düşünce yapısı.",
+                "Türkçe": "Teori, düşünce sistemi",
+                "Cümle": "Einstein’ın görelilik kuramı fizik dünyasında çığır açtı."
+            },
+            {
+                "Harf": "L",
+                "Kelime": "Liberal",
+                "Anlamı": "Özgürlükçü, kısıtlamaları az olan.",
+                "Türkçe": "Serbest",
+                "Cümle": "Yöneticinin liberal tutumu, çalışanların fikirlerini özgürce ifade etmesine olanak tanıyor."
+            },
+            {
+                "Harf": "L",
+                "Kelime": "Lirik",
+                "Anlamı": "Çok etkili, coşkun, genellikle kişisel duyguları dile getiren .",
+                "Türkçe": "Duygusal, şiirsel, coşkulu",
+                "Cümle": "Şiirlerinde hep lirik bir üslup vardır."
+            },
+            {
+                "Harf": "L",
+                "Kelime": "Literatür",
+                "Anlamı": "Herhangi bir bilim dalında yazılmış olan yazıların, yapıtların tümü.",
+                "Türkçe": "Yazın, eser, kaynak",
+                "Cümle": "Konuyla ilgili güncel literatürü incelemelisin."
+            },
+            {
+                "Harf": "L",
+                "Kelime": "Lojik",
+                "Anlamı": "Mantıklı, akıl yürütmeye dayalı; mantık bilimi ile ilgili.",
+                "Türkçe": "Mantıklı, akılcı, sistemli",
+                "Cümle": "Bu problemi çözmek için lojik bir yaklaşım benimsemeliyiz."
+            },
+            {
+                "Harf": "L",
+                "Kelime": "Lüzum",
+                "Anlamı": "Gereklilik, ihtiyaç, zorunluluk.",
+                "Türkçe": "Gerek",
+                "Cümle": "Bu konunun üzerinde durmanın hiçbir lüzumu yok."
+            },
+            {
+                "Harf": "M",
+                "Kelime": "Meşruiyet",
+                "Anlamı": "Yasaya, töreye vb. uygunluk, geçerlilik.",
+                "Türkçe": "Yasallık, uygunluk",
+                "Cümle": "Alınan kararın meşruiyeti tartışılmalıydı."
+            },
+            {
+                "Harf": "M",
+                "Kelime": "Metamorfoz",
+                "Anlamı": "Başka bir biçime, görünüme veya duruma dönüşme, değişim.",
+                "Türkçe": "Dönüşüm, değişim",
+                "Cümle": "Şehir, yıllar içinde ekonomik ve kültürel bir metamorfoz yaşadı."
+            },
+            {
+                "Harf": "M",
+                "Kelime": "Mistik",
+                "Anlamı": "Açıklanamayan, akıl dışı.",
+                "Türkçe": "Gizemli",
+                "Cümle": "Necip Fazıl Türk edebiyatının mistik şairidir."
+            },
+            {
+                "Harf": "M",
+                "Kelime": "Mozaik",
+                "Anlamı": "Küçük parçaların bir araya gelerek oluşturduğu bütün; renkli veya farklı parçaların birleşimi.",
+                "Türkçe": "Çeşitlilik, karışıklık, birleşim",
+                "Cümle": "Şehrin kültürel yapısı adeta bir mozaik gibi çeiştlidir."
+            },
+            {
+                "Harf": "M",
+                "Kelime": "Muamma",
+                "Anlamı": "Anlaşılması veya çözülmesi zor.",
+                "Türkçe": "Bilinmezlik, gizem, sır",
+                "Cümle": "Olayın arkasındaki gerçek hâlâ bir muamma."
+            },
+            {
+                "Harf": "M",
+                "Kelime": "Muğlak",
+                "Anlamı": "Anlaşılması zor, anlaşılmaz, çapraşık, karışık.",
+                "Türkçe": "Karışık",
+                "Cümle": "Bugün yaptığı konuşmada muğlak ifadelere çok yer vermişti."
+            },
+            {
+                "Harf": "M",
+                "Kelime": "Münasebet",
+                "Anlamı": "İlişki, bağlantı veya ilişki biçimi.",
+                "Türkçe": "İlişki, bağ, bağlantı",
+                "Cümle": "Bu konu ile ekonomi arasındaki münasebet iyi araştırılmalı."
+            },
+            {
+                "Harf": "M",
+                "Kelime": "Müzikalite",
+                "Anlamı": "Müzik ile ilgili özellik; ritim, uyum ve ahenk duyusu.",
+                "Türkçe": "Ritim, ahenk, uyum",
+                "Cümle": "Eserin müzikalitesi sade melodilerle bile güçlü bir duygu yaratıyor."
+            },
+            {
+                "Harf": "N",
+                "Kelime": "Nicelik",
+                "Anlamı": "Bir şeyin ölçülebilen yönü, miktarı.",
+                "Türkçe": "Sayıca değer, miktar",
+                "Cümle": "Araştırmada veri niceliği kadar doğruluğu da önemlidir."
+            },
+            {
+                "Harf": "N",
+                "Kelime": "Nihai",
+                "Anlamı": "Bir sürecin sonunda varılan.",
+                "Türkçe": "Sonuncu, sonuç olarak",
+                "Cümle": "Toplantıda alınan karar nihai kabul edildi."
+            },
+            {
+                "Harf": "N",
+                "Kelime": "Nitelik",
+                "Anlamı": "Bir şeyin nasıl ve ne tür olduğunu belirten yön.",
+                "Türkçe": "Özellik, vasıf",
+                "Cümle": "Eğitimde önemli olan, bilginin nitelik bakımından güçlü olmasıdır."
+            },
+            {
+                "Harf": "N",
+                "Kelime": "Nüfuz etmek.",
+                "Anlamı": "Etkili olmak",
+                "Türkçe": "",
+                "Cümle": "Bu dijital dönemde iletişim teknolojileri, yaşamın her alanına nüfuz etmiş"
+            },
+            {
+                "Harf": "N",
+                "Kelime": "Nükte",
+                "Anlamı": "Zekice söylenmiş, düşündürücü ve güldürücü kısa söz.",
+                "Türkçe": "İnce anlamlı söz, espri",
+                "Cümle": "Sohbetlerinde mutlaka bir nükte bulursun."
+            },
+            {
+                "Harf": "O",
+                "Kelime": "Odaklanma",
+                "Anlamı": "Yoğunlaşma.",
+                "Türkçe": "Hedefleme",
+                "Cümle": "Bu sınava odaklan."
+            },
+            {
+                "Harf": "O",
+                "Kelime": "Olgu",
+                "Anlamı": "Sonuç.",
+                "Türkçe": "Vakıa",
+                "Cümle": "Talas Savaşı'nın olguları saymakla bitmez."
+            },
+            {
+                "Harf": "O",
+                "Kelime": "Organizmalar",
+                "Anlamı": "Canlı bir varlığı oluşturan organların tümü.",
+                "Türkçe": "Canlı varlık",
+                "Cümle": "Organizmaların metabolizma faaliyetleri farklılık gösterir."
+            },
+            {
+                "Harf": "O",
+                "Kelime": "Oylum",
+                "Anlamı": "Bir cismin doldurduğu boşluk.",
+                "Türkçe": "Hacim",
+                "Cümle": "Bu kürenin oylumu çapı bilindiğinde kolayca hesaplanabilir ."
+            },
+            {
+                "Harf": "Ö",
+                "Kelime": "Ölçüt",
+                "Anlamı": "Birşeyi değerlendirirken veya karşılaştırırken temel alınan kriter, standart, kıstas.",
+                "Türkçe": "Kıstas",
+                "Cümle": "Gerekli ölçütleri belirlemek yöneticilerin ve bireylerin kendi görevleridir."
+            },
+            {
+                "Harf": "Ö",
+                "Kelime": "Öykünme",
+                "Anlamı": "Birini taklit etme, benzemeye çalışma, başkasının tarzını tutumunu kendine uygulama.",
+                "Türkçe": "Taklit",
+                "Cümle": "Çocuklar çoğu zaman arkadaşlarını öykünme eğilimindedir."
+            },
+            {
+                "Harf": "Ö",
+                "Kelime": "Özdeyiş",
+                "Anlamı": "Kısa anlamlı düşündürücü genel yargı bildiren söz, aforizma niteliğindeki öğüt.",
+                "Türkçe": "Aforizma",
+                "Cümle": "Kitap, özdeyişlerle dolu bir derlemeydi."
+            },
+            {
+                "Harf": "Ö",
+                "Kelime": "Özgü",
+                "Anlamı": "Birine veya bir şeye ait olan.",
+                "Türkçe": "",
+                "Cümle": "Her sanatçının kendine özgü dili vardır."
+            },
+            {
+                "Harf": "Ö",
+                "Kelime": "Özlülük",
+                "Anlamı": "Kısalık, sadelik, ayrıntıdan uzak durma, az sözle çok şey anlatma.",
+                "Türkçe": "Kısalık",
+                "Cümle": "Bazen özlülük şiirin değerini arttırır."
+            },
+            {
+                "Harf": "Ö",
+                "Kelime": "Özümsemek",
+                "Anlamı": "Bir bilgiyi anlayıp onu var olan bilgiyle harmanlayıp birleştirmek.",
+                "Türkçe": "İçselleştirmek",
+                "Cümle": "Yeni bilgileri özümlemeden ilerlemek mümkün değildir."
+            },
+            {
+                "Harf": "Z",
+                "Kelime": "Özveri",
+                "Anlamı": "Bir amaç uğruna veya gerçekleştirilmesi istenen herhangi bir şey için kendi çıkarlarından vazgeçme.",
+                "Türkçe": "Fedakârlık.",
+                "Cümle": "Sınava büyük bir özveri ile çalışıyor."
+            },
+            {
+                "Harf": "P",
+                "Kelime": "Payanda",
+                "Anlamı": "Eğilmiş, yerinden oynamış bir nesnenin düşmemesi için konulan dayak, destek.",
+                "Türkçe": "Destek, dayanak",
+                "Cümle": "Eski duvarın yıkılmaması için yanına bir payanda koydular."
+            },
+            {
+                "Harf": "P",
+                "Kelime": "Perspektif",
+                "Anlamı": "Eşyanın ve nesnelerin uzaktan görünüşü.",
+                "Türkçe": "Bakış açısı, görüş yönü",
+                "Cümle": "Olaylara farklı bir perspektiften bakmak gerekir."
+            },
+            {
+                "Harf": "P",
+                "Kelime": "Polemik",
+                "Anlamı": "Siyasal, bilimsel ya da yazınsal herhangi bir konuda yazılı olarak, basında yapılan sert tartışma, kalem kavgası.",
+                "Türkçe": "Tartışma, fikir çatışması",
+                "Cümle": "İki yazar arasında uzun süren bir polemik yaşandı."
+            },
+            {
+                "Harf": "P",
+                "Kelime": "Popülerlik",
+                "Anlamı": "Popüler olma durumu.",
+                "Türkçe": "Halk arasında tanınmışlık, ün",
+                "Cümle": "Şarkıcının popülerliği son aylarda hızla arttı."
+            },
+            {
+                "Harf": "P",
+                "Kelime": "Potansiyel",
+                "Anlamı": "Varlığı, gücü ortaya çıkmamış olan.",
+                "Türkçe": "Gizli güç, gerçekleşme olasılığı",
+                "Cümle": "Bu öğrencinin büyük bir potansiyeli var."
+            },
+            {
+                "Harf": "R",
+                "Kelime": "Rasyonellik",
+                "Anlamı": "Aklın kurallarına uygun olan, tutarlı, mantık çerçevelerine uygun.",
+                "Türkçe": "Mantıklılık, akla uygunluk",
+                "Cümle": "Bu durumda duygularla değil, rasyonellikle hareket etmeliyiz."
+            },
+            {
+                "Harf": "R",
+                "Kelime": "Realite",
+                "Anlamı": "Var olan her şey.",
+                "Türkçe": "Gerçeklik",
+                "Cümle": "Hayal güzel ama realite o kadar kolay değil."
+            },
+            {
+                "Harf": "R",
+                "Kelime": "Refleks",
+                "Anlamı": "Dıştan gelen bir uyarıma karşı oluşuveren, devinim, salgı gibi tepkiler biçiminde kendini gösteren.",
+                "Türkçe": "Tepki, ani hareket",
+                "Cümle": "Topu hemen yakalaması tamamen refleksle oldu."
+            },
+            {
+                "Harf": "S",
+                "Kelime": "Salık vermek",
+                "Anlamı": "Önermek,teklif etmek.",
+                "Türkçe": "Tavsiye etmek",
+                "Cümle": "Arkadaşım bu kitabı bana salık verdi."
+            },
+            {
+                "Harf": "S",
+                "Kelime": "Salt",
+                "Anlamı": "İçine, kendisine yabancı hiçbir şey karışmamış, arı.",
+                "Türkçe": "Sadece",
+                "Cümle": "Salt bunları konuşmaktan işte hiç ilerleme gösteremedin."
+            },
+            {
+                "Harf": "S",
+                "Kelime": "Sav",
+                "Anlamı": "Savunulan düşünce .",
+                "Türkçe": "İddia",
+                "Cümle": "Bu sav pek çok kişi tarafından desteklenir."
+            },
+            {
+                "Harf": "S",
+                "Kelime": "Seçki",
+                "Anlamı": "Seçilmiş eser.",
+                "Türkçe": "Antoloji",
+                "Cümle": "Ben seçki şiirlere bayılırım."
+            },
+            {
+                "Harf": "S",
+                "Kelime": "Silüet",
+                "Anlamı": "Gölge görüntüler.",
+                "Türkçe": "Gölge",
+                "Cümle": "Kapının yanından geçerken bir silüet gördüm."
+            },
+            {
+                "Harf": "S",
+                "Kelime": "Simge",
+                "Anlamı": "Sembol.",
+                "Türkçe": "İşaret",
+                "Cümle": "Bu simgelerin anlamı çok derin."
+            },
+            {
+                "Harf": "S",
+                "Kelime": "Süreğen",
+                "Anlamı": "Sürüp giden.",
+                "Türkçe": "Hiç ara vermeden devam eden",
+                "Cümle": "Bu yağmur süreğene benziyor."
+            },
+            {
+                "Harf": "Ş",
+                "Kelime": "Şematik",
+                "Anlamı": "Bir nesnenin, bir organın vb. genel düzenini gösteren.",
+                "Türkçe": "",
+                "Cümle": "Öğretmen konuyu tahtada şematik olarak anlattı."
+            },
+            {
+                "Harf": "T",
+                "Kelime": "Tasvip etme",
+                "Anlamı": "Bir davranışı, düşünceyi, ya da kararı uygun bulmak, onaylamak.",
+                "Türkçe": "Onaylamak",
+                "Cümle": "Müdür yapılan değişiklikleri tasvip etmedi."
+            },
+            {
+                "Harf": "T",
+                "Kelime": "Tekdüzelik",
+                "Anlamı": "Herşeyin aynı biçimede değişime uğramadan devam etmesi, çeşitlilik olmaması, monotonluk.",
+                "Türkçe": "Monotonluk",
+                "Cümle": "Hayatta renk herzaman tekdüzeliği bozar ."
+            },
+            {
+                "Harf": "T",
+                "Kelime": "Tını",
+                "Anlamı": "Bir sesin kendine özgü yankısı, ekosu, karakteri.",
+                "Türkçe": "Ezgi",
+                "Cümle": "Tınısı yumuşak bir rüzgar gibidir ."
+            },
+            {
+                "Harf": "T",
+                "Kelime": "Tolerans",
+                "Anlamı": "Hataları görmezden gelme erdemi, farklı görüşlere hoşgörülü olma durumu.",
+                "Türkçe": "Anlayış",
+                "Cümle": "Hatalara tolerans göstermek büyüklüktür."
+            },
+            {
+                "Harf": "T",
+                "Kelime": "Türbülans",
+                "Anlamı": "Akışkanın düzensiz hareketi, yalpalaması, gündelik hayattaki karışıklık, sarsıntı, kaos.",
+                "Türkçe": "Sarsıntı",
+                "Cümle": "Uçuş esnasında yaşanan türbülans herkesi tedirgin etti."
+            },
+            {
+                "Harf": "U",
+                "Kelime": "Uğraş",
+                "Anlamı": "Sürekli yapılan iş, uğraşılan alan.",
+                "Türkçe": "Meşguliyet",
+                "Cümle": "Her insanın bir uğraşı olmalı."
+            },
+            {
+                "Harf": "U",
+                "Kelime": "Ulam",
+                "Anlamı": "Aynı türeden kavramları içeren grup, sınıf veya kategori.",
+                "Türkçe": "Tür",
+                "Cümle": "Canlılar iki ana ulama ayrılır."
+            },
+            {
+                "Harf": "U",
+                "Kelime": "Usanmak",
+                "Anlamı": "Bir şeyden bıkmak, sıkılmak, artık yapmak istememek.",
+                "Türkçe": "Yılmak",
+                "Cümle": "İnsan bazen herşeyden usanıyor."
+            },
+            {
+                "Harf": "U",
+                "Kelime": "Uyarlama",
+                "Anlamı": "Bir yapıtın (hikaye, roman, oyun, vb. ) başka bir biçime dönüştürülmesi, uygun hale getirilmesi.",
+                "Türkçe": "Uygunlaştırma",
+                "Cümle": "Uyarlama yapılırken editörler bazı şeyleri değiştirme gereği duyabilir."
+            },
+            {
+                "Harf": "U",
+                "Kelime": "Uzlaşmak",
+                "Anlamı": "Farklı görüşteki kişilerin ortak bir noktada karara varması.",
+                "Türkçe": "Ortak karar almak",
+                "Cümle": "Uzlaşmak sabır ve empati gerektrir."
+            },
+            {
+                "Harf": "Ü",
+                "Kelime": "Üçleme",
+                "Anlamı": "Birbiriyle bağlantılı üç bölümden oluşan eser veya anlatım.",
+                "Türkçe": "Üç parçalı eser",
+                "Cümle": "Yazarın romanları bir üçleme halinde yayınlandı."
+            },
+            {
+                "Harf": "Ü",
+                "Kelime": "Ünsüzleşmek",
+                "Anlamı": "Söz ve davranış bakımından geri çekilmek.",
+                "Türkçe": "Sessizleşmek, içine kapanmak",
+                "Cümle": "Toplamtıda fikirlerini söylemekten çekinen genç, giderek sessizleşti."
+            },
+            {
+                "Harf": "Ü",
+                "Kelime": "Üryan",
+                "Anlamı": "Çıplak, süssüz,  sadelikte olan.",
+                "Türkçe": "Sade",
+                "Cümle": "Yazar karakterin ruh halini üryan bir şekilde tasvir etmişti."
+            },
+            {
+                "Harf": "Ü",
+                "Kelime": "Üstgörünüm",
+                "Anlamı": "Yüzeydeki görünüm, dış izlenim.",
+                "Türkçe": "Dış görünüş, yüzey",
+                "Cümle": "Karakterin gerçek duyguları, üstgörünümün aksine cok farklıydı."
+            },
+            {
+                "Harf": "Ü",
+                "Kelime": "Ütümsüz",
+                "Anlamı": "Düzgün, olmayan şekilsiz.",
+                "Türkçe": "Şekilsiz",
+                "Cümle": "Ev ve kıyafetleri karakterin ütümsüz hayatını yansıtıyordu."
+            },
+            {
+                "Harf": "V",
+                "Kelime": "Varlıktaş",
+                "Anlamı": "Aynı varoluş durumuna sahip olan, benzer varlık veya aynı türden olan anlamına gelir.",
+                "Türkçe": "Ortak varoluş sahibi",
+                "Cümle": "İnsanlar her ne kadar farklı görünselerde de duygularında varlıktaştır."
+            },
+            {
+                "Harf": "V",
+                "Kelime": "Velinimet",
+                "Anlamı": "Büyük iyilik yapan hayırsever kişidir.",
+                "Türkçe": "İyiliksever",
+                "Cümle": "Kasabanın fakir çocukları eski velinimet sayesinde eğitim görebiliyordu."
+            },
+            {
+                "Harf": "V",
+                "Kelime": "Velud",
+                "Anlamı": "Çok konuşan sözleri bol.",
+                "Türkçe": "Sözlü, konuşkan",
+                "Cümle": "Romanda ki karakter toplantılarda cok velùd bir karakterdi."
+            },
+            {
+                "Harf": "V",
+                "Kelime": "Virtüöz",
+                "Anlamı": "Herhangi bir müzik aletini büyük ustalıkla çalabilen sanatçılar için kullanılır.",
+                "Türkçe": "Usta sanatçı",
+                "Cümle": "Piyanoyu o kadar iyi çaldı ki tam bir virtüöz gibiydi."
+            },
+            {
+                "Harf": "V",
+                "Kelime": "Vitrinden uzaklaşmak",
+                "Anlamı": "Gösterişten, dış görünüşten veya yüzeysel ilgiden uzaklaşmak anlamındadir.",
+                "Türkçe": "Abartıdan kaçınmak",
+                "Cümle": "Toplum olarak vitrinden uzaklaşıp samimiyete yönelmeliyiz."
+            },
+            {
+                "Harf": "Y",
+                "Kelime": "Yadsımak",
+                "Anlamı": "Bir şeyi onaylamamak, kabul etmemek , önemsememek anlamına gelir",
+                "Türkçe": "Reddetmek",
+                "Cümle": "Gerçekleri sürekli yadsımak sorunları çözmeyi zorlaştırır."
+            },
+            {
+                "Harf": "Y",
+                "Kelime": "Yazın",
+                "Anlamı": "Olay, duygu , düşünce ve hayallerin dil aracılığı ile biçimlendirilmesi sanatıdır.",
+                "Türkçe": "Yazı sanatı",
+                "Cümle": "Bu kitap Türk yazın tarihinin önemli örneklerinden biridir."
+            },
+            {
+                "Harf": "Y",
+                "Kelime": "Yazınsal tutkal",
+                "Anlamı": "Bir metinde farklı bölümleri, olayları veya fikirleri bir arada tutan metnin bütünlüğünü sağlayan unsur",
+                "Türkçe": "Bağlayıcı öge",
+                "Cümle": "Karakterin duyguları metinde yazınsal tutkal görevi görüyor."
+            },
+            {
+                "Harf": "Y",
+                "Kelime": "Yeğlemek",
+                "Anlamı": "Diğerlerinden daha üstün görüp bir şeye yönelmek, yeğ tutmak, tercih etmek.",
+                "Türkçe": "Tercih etmek",
+                "Cümle": "Hafta sonu gezmektense evde dinlenmeyi yeğlerim."
+            },
+            {
+                "Harf": "Y",
+                "Kelime": "Yeknesak",
+                "Anlamı": "Monoton, tekdüze.",
+                "Türkçe": "Sıradan",
+                "Cümle": "Belki de dünyanın hayatı bizimkinden daha yeknesak ve bilhassa daha tekrarlıdır."
+            },
+            {
+                "Harf": "Y",
+                "Kelime": "Yeti",
+                "Anlamı": "Bir işi yapabilme gücü .",
+                "Türkçe": "Olgunluk",
+                "Cümle": "Çocuğun fiziksel ve zihinsel yetisi okul ve aile tarafından desteklenmelidir."
+            },
+            {
+                "Harf": "Y",
+                "Kelime": "Yetke",
+                "Anlamı": "Bir kişinin bir iş veya konuda sahip olduğu yetki, yetenek ve sorumluluğu anlamına gelir.",
+                "Türkçe": "Güç, hak, sorumluluk alanı",
+                "Cümle": "Müdür bu konuda tam yetkeye sahiptir."
+            },
+            {
+                "Harf": "Z",
+                "Kelime": "Zanaat",
+                "Anlamı": "El becerisiyle yapılan ustalık gerektiren iş veya meslek.",
+                "Türkçe": "Ustalık",
+                "Cümle": "Zanaatkarlar, kültürün sesiz koruyucularıdır."
+            },
+            {
+                "Harf": "Z",
+                "Kelime": "Zarafet",
+                "Anlamı": "Davranışta konuşmada ve görünüşte incelik, hoşuk, nezaket.",
+                "Türkçe": "Kibar davranış",
+                "Cümle": "Onun zarafeti herkesi büyüledi."
+            },
+            {
+                "Harf": "Z",
+                "Kelime": "Zıtlık",
+                "Anlamı": "Birbirine karşıt, ters veya uyumsuz olma durumu.",
+                "Türkçe": "Terslik",
+                "Cümle": "Zıtlık sanatta dengeyi ve ilerleyişi sağlar."
+            },
+            {
+                "Harf": "Z",
+                "Kelime": "Zihniyet",
+                "Anlamı": "Bir kişinin veya toplumun düşünme biçimi, bakış açısı, anlayışı.",
+                "Türkçe": "Felsefe",
+                "Cümle": "Toplumların zihniyeti zamanla değişir."
+            },
+            {
+                "Harf": "Z",
+                "Kelime": "Zirve",
+                "Anlamı": "Bir şeyin en yüksek noktası, en üst düzeyi.",
+                "Türkçe": "Doruk",
+                "Cümle": "Spocunun kariyeri zirveye ulaştı."
+            }
+        ]
         var openWordCounter = 0
 
         function render(data = words) {
             const listElement = document.getElementById("word-list")
             listElement.innerHTML = ""
 
-            for (let word of data) {
-                if(! word) continue;
-                listElement.innerHTML += `
-            <div class="word-container">
-                <div class="word-reveal-button" onclick="revealOrHide(event)">
-                    <span>${word.Kelime}</span>
-                </div>
-                <span>Anlamı: ${word.Anlamı}</span>
-                <span>Türkçesi: ${word.Türkçe}</span>
-                <span>Cümle İçinde: ${word.Cümle}</span>
-            </div>
-        `
-            }
-        }
+            let width = window.screen.width;
+            let wordCount = data.length
 
+            let factor = Math.ceil(width / 900)
+            let wordsPerCollumn = data.length / factor;
+            let collumns = []
+
+            for(let i = 0;i<factor;i++){
+              let collumn = document.createElement("div")
+              collumn.classList.add("collumn")
+
+              collumns.push(collumn)
+              listElement.append(collumns[i])
+            }
+
+            for(let i = 0;i<data.length;i+=factor){
+              for(let col=0;col<factor;col++){
+                let word = data[i+col];
+                if(!word) continue
+                collumns[col].innerHTML += (
+                  `
+                    <div class="word-container" >
+                        <div class="word-reveal-button" onclick="revealOrHide(event)">
+                            <span>${word.Kelime}</span>
+                        </div>
+                        <span>Anlamı: ${word.Anlamı}</span>
+                        <span>Türkçesi: ${word.Türkçe}</span>
+                        <span>Cümle İçinde: ${word.Cümle}</span>
+                    </div>
+                 `
+                )
+              }
+            }
+
+            return;
+        }
 
         function revealOrHide(e) {
             const element = (e.currentTarget || e.target).parentElement;
 
             if (element.classList.contains("activated")) {
                 element.classList.remove("activated")
-                openWordCounter--;
+                openWordCounter-=1;
             } else {
                 element.classList.add("activated")
-                openWordCounter++;
+                openWordCounter+=1;
             }
-
-            calculateRows()
         }
 
         function search(e) {
             const inp = e.target
-            let data = words.map(x => {
-                if (inp.value == "" || x.Kelime.toLowerCase().includes(inp.value.toLowerCase())){ return x} else return null
+            let data = words.filter(x => {
+                if (inp.value == "" || x.Kelime.toLowerCase().includes(inp.value.toLowerCase())) {
+                    return true
+                } else return false
             })
             render(data)
-            calculateRows(data)
         }
 
-        function calculateRows (data = words){
-            let width = window.screen.width;
-            let wordCount = data.length
-
-            let factor = Math.ceil(width / 900)
-            let rowCount = Math.ceil(wordCount / factor) + openWordCounter * 2
-
-            document.documentElement.style.setProperty('--row-count', `${rowCount}`);
-        }
 
         document.getElementById("search-bar").value = ""
         render()
-        calculateRows()
     </script>
 </body>
 
